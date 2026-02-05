@@ -41,6 +41,7 @@ class WatermarkManager {
             this.activeIndex = 0;
         }
 
+        console.log(`Added ${fileList.length} images. Total: ${this.images.length}`);
         if (this.onImagesChanged) this.onImagesChanged(this.images);
     }
 

@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
     manager.onImagesChanged = (images) => {
         renderThumbnails(images);
         elements.imageCount.textContent = images.length;
+        elements.imageCount.classList.remove('pulse');
+        void elements.imageCount.offsetWidth; // trigger reflow
+        elements.imageCount.classList.add('pulse');
         elements.exportBtn.disabled = images.length === 0;
 
         if (images.length > 0) {
@@ -64,17 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Render Logic ---
 
+    let refreshTimeout = null;
     async function refreshMainPreview() {
-        const activeItem = manager.getActiveImage();
-        if (!activeItem) return;
+        if (refreshTimeout) clearTimeout(refreshTimeout);
+        refreshTimeout = setTimeout(async () => {
+            const activeItem = manager.getActiveImage();
+            if (!activeItem) return;
 
-        // Load image object
-        const img = new Image();
-        img.src = URL.createObjectURL(activeItem.file);
-        img.onload = async () => {
+            const img = await loadImage(activeItem.file);
             await CanvasRenderer.render(mainCanvas, img, manager.config);
-            URL.revokeObjectURL(img.src);
-        };
+        }, 10);
     }
 
     function renderThumbnails(images) {
@@ -116,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // File selection
     elements.addBtn.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => manager.addImages(e.target.files);
     // Text & Basic Styles
     elements.wmText.oninput = (e) => manager.updateConfig({ text: e.target.value });
     elements.wmColor.oninput = (e) => manager.updateConfig({ color: e.target.value });

@@ -47,11 +47,11 @@ class CanvasRenderer {
 
             for (let x = -diagonal; x < diagonal + step; x += step) {
                 for (let y = -diagonal; y < diagonal + step; y += step) {
-                    ctx.fillText(config.text, x, y);
                     if (config.hasStroke) {
-                        ctx.lineWidth = fontSize / 15; // Set line width proportional to font size
+                        ctx.lineWidth = Math.max(2, fontSize / 12); // Significantly more visible
                         ctx.strokeText(config.text, x, y);
                     }
+                    ctx.fillText(config.text, x, y); // Draw text AFTER stroke for cleaner edges
                 }
             }
         } else if (config.type === 'image' && config.logo) {

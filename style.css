@@ -383,3 +383,23 @@ input[type="range"] {
     background: white;
     transform: scale(1.1);
 }
+
+@keyframes count-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.4);
+        color: var(--primary-color);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+#image-count.pulse {
+    display: inline-block;
+    animation: count-pulse 0.4s ease-out;
+}
