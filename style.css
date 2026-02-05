@@ -302,30 +302,31 @@ input[type="range"] {
 .thumbnails-container {
     display: flex;
     gap: 16px;
-    padding: 10px 4px 20px 4px;
-    /* More bottom padding for safety */
+    padding: 12px 6px 24px 6px;
+    /* Increased bottom padding */
     overflow-x: auto;
     scrollbar-width: thin;
-    min-height: 120px;
+    min-height: 140px;
+    /* Increased height for better fit */
     align-items: center;
 }
 
 .thumb-card {
-    min-width: 90px;
-    height: 90px;
-    border-radius: 8px;
-    background: #e2e8f0;
+    min-width: 100px;
+    width: 100px;
+    height: 100px;
+    background: var(--bg-color);
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s;
-    background: var(--bg-color);
-    border-radius: 10px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: var(--shadow-sm);
 }
 
 .thumb-card.active {
@@ -336,7 +337,12 @@ input[type="range"] {
 .thumb-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    /* Ensure full image visibility */
+    padding: 6px;
+    /* Slight padding to keep it away from edges */
+    background: #f8fafc;
+    /* Subtle background for low-contrast images */
 }
 
 .select-control {
