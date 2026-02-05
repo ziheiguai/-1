@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI Elements
     const elements = {
         wmText: document.getElementById('wm-text'),
-        wmFont: document.getElementById('wm-font-family'),
         wmBold: document.getElementById('wm-bold'),
         wmStroke: document.getElementById('wm-stroke'),
         logoUpload: document.getElementById('logo-upload-box'),
@@ -117,10 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // File selection
     elements.addBtn.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => manager.addImages(e.target.files);
+    // Text & Basic Styles
+    elements.wmText.oninput = (e) => manager.updateConfig({ text: e.target.value });
+    elements.wmColor.oninput = (e) => manager.updateConfig({ color: e.target.value });
+    elements.wmSize.oninput = (e) => manager.updateConfig({ fontSize: e.target.value });
 
-    // Font & Styling
-    elements.wmFont.onchange = (e) => manager.updateConfig({ fontFamily: e.target.value });
     elements.wmBold.onchange = (e) => manager.updateConfig({ isBold: e.target.checked });
     elements.wmStroke.onchange = (e) => manager.updateConfig({ hasStroke: e.target.checked });
 

@@ -41,14 +41,17 @@ class CanvasRenderer {
 
             const fontSize = parseInt(config.fontSize) * (canvas.width / 1000);
             const fontWeight = config.isBold ? 'bold' : 'normal';
-            ctx.font = `${fontWeight} ${fontSize}px ${config.fontFamily}`;
+            ctx.font = `${fontWeight} ${fontSize}px "Inter", sans-serif`;
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'center';
 
             for (let x = -diagonal; x < diagonal + step; x += step) {
                 for (let y = -diagonal; y < diagonal + step; y += step) {
                     ctx.fillText(config.text, x, y);
-                    if (config.hasStroke) ctx.strokeText(config.text, x, y);
+                    if (config.hasStroke) {
+                        ctx.lineWidth = fontSize / 15; // Set line width proportional to font size
+                        ctx.strokeText(config.text, x, y);
+                    }
                 }
             }
         } else if (config.type === 'image' && config.logo) {

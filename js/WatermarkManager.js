@@ -25,8 +25,9 @@ class WatermarkManager {
     }
 
     async addImages(files) {
-        for (const file of files) {
-            const id = Date.now() + Math.random().toString(36).substr(2, 9);
+        const fileList = Array.from(files); // Ensure it's an array
+        for (const file of fileList) {
+            const id = Date.now() + Math.random().toString(36).substring(2, 9);
             const thumbnail = await this.generateThumbnail(file);
             this.images.push({
                 id,
