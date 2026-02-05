@@ -38,9 +38,11 @@ h3 {
         "header header"
         "main config"
         "footer footer";
-    grid-template-columns: 1fr 320px;
-    grid-template-rows: 64px 1fr 180px;
+    grid-template-columns: 1fr 340px;
+    grid-template-rows: 64px 1fr auto;
+    /* Let footer size naturally but keep on screen */
     height: 100vh;
+    overflow: hidden;
 }
 
 /* Header */
@@ -136,8 +138,10 @@ h3 {
 .app-main {
     grid-area: main;
     display: flex;
-    padding: 24px;
-    gap: 24px;
+    padding: 20px;
+    gap: 20px;
+    min-height: 0;
+    /* Critical for grid stability */
 }
 
 .preview-area {
@@ -302,21 +306,21 @@ input[type="range"] {
 .thumbnails-container {
     display: flex;
     gap: 16px;
-    padding: 12px 6px 24px 6px;
-    /* Increased bottom padding */
+    padding: 8px 4px 16px 4px;
+    /* Slightly tighter padding */
     overflow-x: auto;
     scrollbar-width: thin;
-    min-height: 140px;
-    /* Increased height for better fit */
+    min-height: 100px;
+    /* Reduced min-height */
     align-items: center;
 }
 
 .thumb-card {
-    min-width: 100px;
-    width: 100px;
-    height: 100px;
+    min-width: 80px;
+    width: 80px;
+    height: 80px;
     background: var(--bg-color);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
@@ -384,10 +388,10 @@ input[type="range"] {
     background: white;
 }
 
-.image-uploa.drop-zone.dragging {
+.drop-zone.dragging {
     border-color: var(--primary-color);
     background: rgba(58, 134, 255, 0.05);
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .btn-sm {
