@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyState: document.getElementById('empty-state'),
         previewContainer: document.getElementById('main-preview-container'),
         typeBtns: document.querySelectorAll('.mode-selector .control-btn'),
-        cropBtns: document.querySelectorAll('.crop-selector .control-btn')
+        cropBtns: document.querySelectorAll('.crop-selector .control-btn'),
+        authorLabel: document.getElementById('author-signature')
     };
 
     // --- initialization ---
@@ -179,14 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // Crop Selector
-    elements.cropBtns.forEach(btn => {
-        btn.onclick = () => {
-            elements.cropBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            manager.updateConfig({ cropRatio: btn.dataset.ratio });
-        };
-    });
+    // Author Interaction
+    elements.authorLabel.onclick = () => {
+        const icons = ['✨', '🎨', '📸', '🚀'];
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+        document.querySelector('.logo-icon').textContent = randomIcon;
+        elements.authorLabel.style.transform = 'scale(1.1)';
+        setTimeout(() => elements.authorLabel.style.transform = 'scale(1)', 200);
+    };
 
     elements.clearBtn.onclick = () => manager.clearImages();
 
@@ -233,19 +234,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Drag & Drop
-    elements.dropZone.ondragover = (e) => {
+    // --- Improved Drag & Drop (Global Listener for better UX) ---
+    document.body.ondragover = (e) => {
         e.preventDefault();
-        elements.dropZone.style.borderColor = 'var(--primary-color)';
+        elements.dropZone.classList.add('dragging');
     };
 
-    elements.dropZone.ondragleave = () => {
-        elements.dropZone.style.borderColor = 'var(--border-color)';
+    document.body.ondragleave = (e) => {
+        if (e.relatedTarget === null || e.relatedTarget === document.documentElement) {
+            elements.dropZone.classList.remove('dragging');
+        }
     };
 
-    elements.dropZone.ondrop = (e) => {
+    document.body.ondrop = (e) => {
         e.preventDefault();
-        elements.dropZone.style.borderColor = 'var(--border-color)';
+        elements.dropZone.classList.remove('dragging');
         if (e.dataTransfer.files.length > 0) {
             manager.addImages(e.dataTransfer.files);
         }

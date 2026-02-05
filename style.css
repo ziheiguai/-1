@@ -62,6 +62,27 @@ h3 {
     gap: 12px;
 }
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.author-badge {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.8;
+}
+
+.author-badge:hover {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(58, 134, 255, 0.3);
+}
+
 .logo h1 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -281,13 +302,17 @@ input[type="range"] {
 .thumbnails-container {
     display: flex;
     gap: 16px;
+    padding: 10px 4px 20px 4px;
+    /* More bottom padding for safety */
     overflow-x: auto;
-    padding-bottom: 8px;
+    scrollbar-width: thin;
+    min-height: 120px;
+    align-items: center;
 }
 
 .thumb-card {
-    min-width: 100px;
-    height: 80px;
+    min-width: 90px;
+    height: 90px;
     border-radius: 8px;
     background: #e2e8f0;
     overflow: hidden;
@@ -295,6 +320,12 @@ input[type="range"] {
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s;
+    background: var(--bg-color);
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .thumb-card.active {
@@ -345,6 +376,12 @@ input[type="range"] {
 .image-upload-box:hover {
     border-color: var(--primary-color);
     background: white;
+}
+
+.image-uploa.drop-zone.dragging {
+    border-color: var(--primary-color);
+    background: rgba(58, 134, 255, 0.05);
+    transform: scale(1.02);
 }
 
 .btn-sm {
