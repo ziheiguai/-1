@@ -10,6 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI Elements
     const elements = {
         wmText: document.getElementById('wm-text'),
+        wmFont: document.getElementById('wm-font-family'),
+        wmBold: document.getElementById('wm-bold'),
+        wmStroke: document.getElementById('wm-stroke'),
+        logoUpload: document.getElementById('logo-upload-box'),
+        logoInput: document.getElementById('logo-input'),
+        logoStatus: document.getElementById('logo-status'),
+        removeLogoBtn: document.getElementById('remove-logo-btn'),
+
+        typeGroupText: document.getElementById('text-config-group'),
+        typeGroupImage: document.getElementById('image-config-group'),
+
         wmOpacity: document.getElementById('wm-opacity'),
         wmRotate: document.getElementById('wm-rotate'),
         wmDensity: document.getElementById('wm-density'),
@@ -25,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         dropZone: document.getElementById('drop-zone'),
         emptyState: document.getElementById('empty-state'),
         previewContainer: document.getElementById('main-preview-container'),
-        modeBtns: document.querySelectorAll('.control-btn')
+        typeBtns: document.querySelectorAll('.mode-selector .control-btn'),
+        cropBtns: document.querySelectorAll('.crop-selector .control-btn')
     };
 
     // --- initialization ---
@@ -71,10 +83,34 @@ document.addEventListener('DOMContentLoaded', () => {
         images.forEach((imgData, index) => {
             const card = document.createElement('div');
             card.className = `thumb-card ${index === manager.activeIndex ? 'active' : ''}`;
-            card.innerHTML = `<img src="${imgData.thumbnail}" alt="thumb">`;
-            card.onclick = () => manager.setActiveImage(index);
+            card.innerHTML = `
+                <img src="${imgData.thumbnail}" alt="thumb">
+                <button class="thumb-download-btn" title="立即下载当前图">💾</button>
+            `;
+
+            // Thumbnail click to switch active
+            card.onclick = (e) => {
+                if (e.target.classList.contains('thumb-download-btn')) {
+                    downloadSingle(imgData);
+                } else {
+                    manager.setActiveImage(index);
+                }
+            };
             thumbnailsContainer.appendChild(card);
         });
+    }
+
+    async function downloadSingle(item) {
+        const offscreen = document.createElement('canvas');
+        const img = await loadImage(item.file);
+        await CanvasRenderer.render(offscreen, img, manager.config, true);
+        const blob = await CanvasRenderer.toBlob(offscreen, item.file.type);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `watermarked_${item.file.name}`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 100);
     }
 
     // --- UI Events ---
@@ -83,10 +119,28 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.addBtn.onclick = () => fileInput.click();
     fileInput.onchange = (e) => manager.addImages(e.target.files);
 
-    // Text & Color
-    elements.wmText.oninput = (e) => manager.updateConfig({ text: e.target.value });
-    elements.wmColor.oninput = (e) => manager.updateConfig({ color: e.target.value });
-    elements.wmSize.oninput = (e) => manager.updateConfig({ fontSize: e.target.value });
+    // Font & Styling
+    elements.wmFont.onchange = (e) => manager.updateConfig({ fontFamily: e.target.value });
+    elements.wmBold.onchange = (e) => manager.updateConfig({ isBold: e.target.checked });
+    elements.wmStroke.onchange = (e) => manager.updateConfig({ hasStroke: e.target.checked });
+
+    // Logo Upload
+    elements.logoUpload.onclick = () => elements.logoInput.click();
+    elements.logoInput.onchange = async (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const img = await loadImage(file);
+            manager.updateConfig({ logo: img });
+            elements.logoStatus.textContent = "✅ Logo 已就绪";
+            elements.removeLogoBtn.classList.remove('hidden');
+        }
+    };
+    elements.removeLogoBtn.onclick = () => {
+        manager.updateConfig({ logo: null });
+        elements.logoStatus.textContent = "点击上传 Logo";
+        elements.removeLogoBtn.classList.add('hidden');
+        elements.logoInput.value = '';
+    };
 
     // Range Sliders
     elements.wmOpacity.oninput = (e) => {
@@ -110,14 +164,24 @@ document.addEventListener('DOMContentLoaded', () => {
         manager.updateConfig({ density: 600 - val });
     };
 
-    // Mode Toggle
-    elements.modeBtns.forEach(btn => {
+    // Type Toggle (Text / Image)
+    elements.typeBtns.forEach(btn => {
         btn.onclick = () => {
-            elements.modeBtns.forEach(b => b.classList.remove('active'));
+            elements.typeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const mode = btn.dataset.mode;
-            document.getElementById('section-density').style.display = mode === 'tile' ? 'block' : 'none';
-            manager.updateConfig({ mode });
+            const type = btn.dataset.type;
+            elements.typeGroupText.classList.toggle('hidden', type !== 'text');
+            elements.typeGroupImage.classList.toggle('hidden', type !== 'image');
+            manager.updateConfig({ type });
+        };
+    });
+
+    // Crop Selector
+    elements.cropBtns.forEach(btn => {
+        btn.onclick = () => {
+            elements.cropBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            manager.updateConfig({ cropRatio: btn.dataset.ratio });
         };
     });
 

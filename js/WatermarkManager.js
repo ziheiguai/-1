@@ -6,13 +6,19 @@ class WatermarkManager {
         this.images = []; // Array of { id, originalFile, thumbnailBase64, processedBlob }
         this.activeIndex = -1;
         this.config = {
+            type: "text", // 'text' or 'image'
             text: "仅供内部使用",
-            mode: "tile", // 'tile' or 'single'
+            logo: null, // Image object
+            fontFamily: "'Inter', sans-serif",
+            isBold: false,
+            hasStroke: false,
+            mode: "tile",
             opacity: 0.3,
             rotate: -45,
             density: 200,
             color: "#ffffff",
-            fontSize: 24
+            fontSize: 24,
+            cropRatio: "original" // 'original', '1:1', '4:3', '16:9'
         };
         this.onImagesChanged = null;
         this.onConfigChanged = null;
@@ -29,7 +35,7 @@ class WatermarkManager {
                 processed: false
             });
         }
-        
+
         if (this.activeIndex === -1 && this.images.length > 0) {
             this.activeIndex = 0;
         }
@@ -70,7 +76,7 @@ class WatermarkManager {
                     const maxDim = 200;
                     let w = img.width;
                     let h = img.height;
-                    
+
                     if (w > h) {
                         if (w > maxDim) {
                             h *= maxDim / w;
@@ -82,7 +88,7 @@ class WatermarkManager {
                             h = maxDim;
                         }
                     }
-                    
+
                     canvas.width = w;
                     canvas.height = h;
                     ctx.drawImage(img, 0, 0, w, h);
